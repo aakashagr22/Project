@@ -1,0 +1,163 @@
+<% layout("/layouts/boilerplate") %>
+
+    <body>
+        <div class="row">
+            <div class="col-7 offset-2 ">
+                <h2>Listing Details:</h2><br>
+                <div class="card col-10 offset-2 show-card listing-card">
+                    <img src="<%= listing.image.url %>" class="card-img-top show-img" alt="listing_image">
+                    <div class="card-body ">
+                        <p class="card-text">
+                            <br>
+                            <i><b> Username: <%= listing.owner.username %></b></i> <br><br>
+                            <b> Id:<%= listing._id %></b> <br><br>
+                            <b>Title:</b>
+                            <%= listing.title %> <br><br>
+                                <b>Description:</b>
+                                <%= listing.description %> <br><br>
+                                    <b>Price:</b> &#8377; <%= listing.price.toLocaleString("en-IN") %> <br><br>
+                                        <b>Image:</b>
+                                        <%= listing.image.url %> <br><br>
+                                            <b>Location: </b>
+                                            <%= listing.location %> <br><br>
+                                                <b>Country: </b>
+                                                <%= listing.country %> <br><br>
+
+                        </p>
+                    </div>
+                </div>
+                <% if(currUser && currUser._id.equals(listing.owner._id)){ %>
+
+                    <div class="btns">
+                        <!-- <a href="/listings" class="btn btn-dark offset-4">Back to Listings</a><br><br> -->
+                        <a href="/listings/<%= listing._id %>/edit"
+                            class="btn edit-btn btn-dark offset-3 ">Edit</a><br><br>
+
+                        <form action="/listings/<%= listing._id %>?_method=DELETE" method="POST">
+                            <button type="submit" class="btn btn-dark offset-6" value="Delete">Delete</button>
+                        </form>
+                    </div>
+                    <% } %>
+            </div>
+            <div class="col-6 offset-3 ">
+                <hr />
+                <% if(currUser) {%>
+                    <h4>Leave a Review</h4>
+                    <form action="/listings/<%= listing._id %>/reviews" method="post" novalidate
+                        class="needs-validation">
+                        <!-- <div class="form-group mb-3 mt-3">
+                            <label for="rating" class="form-label">Rating (1-5):</label>
+                            <input type="range" id="rating" name="review[rating]" min="1" max="5">
+                        </div> -->
+                        <div class="form-group mb-3 mt-3"></div>
+                        <label for="rating" class="form-label">Rating (1-5):</label>
+                        <fieldset class="starability-slot">
+                           
+                            <!-- <legend>First rating:</legend> -->
+                            <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="0" checked aria-label="No rating." />
+                            <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                            <label for="first-rate1" title="Terrible">1 star</label>
+                            <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                            <label for="first-rate2" title="Not good">2 stars</label>
+                            <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                            <label for="first-rate3" title="Average">3 stars</label>
+                            <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                            <label for="first-rate4" title="Very good">4 stars</label>
+                            <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                            <label for="first-rate5" title="Amazing">5 stars</label>
+                          </fieldset> </div>
+
+                        <div class="form-group mb-3 col-7 offset-3 mt-3">
+                            <label for="comment" class="form-label">Comment:</label>
+                            <textarea id="comment" name="review[comment]" cols="30" rows="5" class="form-control"
+                                required></textarea> <br>
+                            <div class="invalid-feedback ">Please submit some code for review</div>
+                       
+                        <button type="submit" class="btn btn-outline-dark mb-3">Submit</button>
+                    </div><br>
+                    </form>
+            </div>
+            <% } %>
+            <br>
+             <% if(listing.reviews.length>0) {%>
+                <div class="row offset-3">
+                    <hr>
+                    <h3><b>All Review</b></h3>
+                    <br><br>
+                    <% for(review of listing.reviews){ %>
+                        <div class="card col-6 ms-3 mb-3">
+                            <div class="card-body">
+                                <h5 class="card-title"> @<%=review.author.username %>
+                                </h5>
+                                <!-- <p class="card-text">Rating: <%= review.rating %>
+                                </p> -->
+                                <p class="starability-result card-text" data-rating="<%= review.rating %>">
+                                  </p>
+                                <p class="card-text">Comment: <%= review.comment %>
+                                </p>
+                                <form action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+                                    method="post" class="mb-3">
+                                    <button class="btn btn-sm btn-outline-dark">Delete</button>
+                                </form>
+                            </div>
+
+                        </div>
+                        <hr>
+                        <% } %>
+                </div><% } %>
+                <div class="col-8 offset-3 mb-3">
+            <h3>where you will be</h3>
+                    <div id='map'></div>
+            
+                
+         
+                    <script>
+                        // Ensure the Map Token is correctly set
+                        let MapToken = "<%= process.env.MAP_TOKENS %>";
+                        console.log("Map Token:", MapToken);
+                    
+                        // Check if MapToken is available
+                        if (!MapToken) {
+                            console.error("Map Token is missing. Please check your environment variables.");
+                        } else {
+                            // Set the LocationIQ API key
+                            locationiq.key = MapToken;
+                    
+                            // Initialize the map
+                            var map = new maplibregl.Map({
+                                container: 'map', // Container ID
+                                style: locationiq.getLayer("Streets"), // Map style
+                                center: [-122.42, 37.779], // Center on listing's location
+                                zoom: 12 // Zoom level
+                            });
+                    
+                            // Add navigation controls to the map
+                            map.addControl(new maplibregl.NavigationControl(), 'top-right');
+                    
+                            // Add a marker at the listing's location
+                            new maplibregl.Marker()
+                                .setLngLat([-122.42, 37.779])
+                                .addTo(map);
+                    
+                            // Define available map styles
+                            var layerStyles = {
+                                "Streets": "streets/vector",
+                                "Dark": "dark/vector",
+                                "Light": "light/vector"
+                            };
+                    
+                            // Add layer control to the map
+                            map.addControl(new locationiq.LayerControl({
+                                key: locationiq.key,
+                                layerStyles: layerStyles
+                            }), 'top-left');
+                        }
+                    </script>
+    </div>
+        
+
+ 
+      </body>
+
+
+
