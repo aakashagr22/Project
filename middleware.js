@@ -52,6 +52,7 @@ module.exports.validateListings = async(req, res,next) => {
 
 module.exports.validateReviews =async (req, res,next) => {
         let {error} = reviewSchema.validate(req.body);
+        
         if(error){
            let errMes = error.details.map((el) => el.message).join(', ');
             throw new ExpressError(400,errMes);  // 400 Bad Request  for invalid data  or form data  not sent correctly. 404 Not Found for invalid URL. 500 Internal Server Error for server errors.  }else{
