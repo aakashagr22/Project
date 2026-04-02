@@ -29,9 +29,9 @@ const User = require('./models/user.js');
 
 const dbUrl = process.env.ATLASDB_URL;
 
-let port = 8080;
+let port = process.env.PORT || 8080;
 app.listen(port,()=>{
-    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Server is running at port ${port}`);
 });
 main()
 .then((req, res)=>{
@@ -81,10 +81,7 @@ store.on("error",(err)=>console.error("Error in MongoStore",err));
 let sessionOptions = {
     store:store,
     name: "mySessionID",
-    secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: true ,
-    secret: "mysupersecretstring",
+    secret: process.env.SECRET || "mysupersecretstring",
     resave: false,
     saveUninitialized: true ,
     cookie:{
