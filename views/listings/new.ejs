@@ -24,14 +24,26 @@
                             name="listing[image]"><div class="invalid-feedback">Image should not be empty!</div>
                     </div>
                     <div class="row">
-                        <div class="mb-3 col-4"> <label for="price" class="form-label">Price:</label><br>
+                        <div class="mb-3 col-md-4"> <label for="price" class="form-label">Price:</label><br>
                             <input type="number" id="price" placeholder="enter your price" name="listing[price]"
                                 class="form-control" required>
                             <div class="invalid-feedback">Price should be valid!</div>
-                        </div><br><br>
-                        <div class="mb-3 col-8"> <label for="country" class="form-label">Country:</label><br>
+                        </div>
+                        <div class="mb-3 col-md-4"> <label for="country" class="form-label">Country:</label><br>
                             <input type="text" id="country" placeholder="enter your country" name="listing[country]"
-                                class="form-control"><div class="invalid-feedback">Country should not be empty!</div>
+                                class="form-control" required><div class="invalid-feedback">Country should not be empty!</div>
+                        </div>
+                        <div class="mb-3 col-md-4"> <label for="category" class="form-label">Category:</label><br>
+                            <select name="listing[category]" id="category" class="form-select" required>
+                                <option value="Trending">Trending</option>
+                                <option value="Rooms">Rooms</option>
+                                <option value="Amazing views">Amazing views</option>
+                                <option value="Castles">Castles</option>
+                                <option value="Beachfront">Beachfront</option>
+                                <option value="Golfing">Golfing</option>
+                                <option value="Lakefront">Lakefront</option>
+                                <option value="OMG!">OMG!</option>
+                            </select>
                         </div>
                     </div><br><br>
                     <div class="mb-3"> <label for="location" class="form-label">Location:</label><br>

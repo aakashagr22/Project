@@ -129,6 +129,10 @@ const listingSchema = new Schema({
     required: true,
     trim: true,
   },
+  category: {
+    type: String,
+    enum: ["Trending", "Rooms", "Amazing views", "Castles", "Beachfront", "Golfing", "Lakefront", "OMG!"],
+  },
   reviews: [
     {
       type: Schema.Types.ObjectId,

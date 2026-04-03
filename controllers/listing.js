@@ -1,12 +1,56 @@
 const Listing  = require("../models/listing");
 
 module.exports.home = async (req, res) => {
-    const allListings = await Listing.find({});
+    let allListings;
+    const { search, category } = req.query;
+    if (search) {
+        allListings = await Listing.find({
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { location: { $regex: search, $options: "i" } },
+                { country: { $regex: search, $options: "i" } }
+            ]
+        });
+        if(allListings.length === 0) {
+            req.flash('error', "No listings found matching your search.");
+            return res.redirect("/listings");
+        }
+    } else if (category) {
+        allListings = await Listing.find({ category: category });
+        if(allListings.length === 0) {
+            req.flash('error', `No listings found in the ${category} category.`);
+            return res.redirect("/listings");
+        }
+    } else {
+        allListings = await Listing.find({});
+    }
     res.render("./listings/index.ejs", { allListings });
 }
 
 module.exports.index = async (req, res) => {
-    const allListings = await Listing.find({});
+    let allListings;
+    const { search, category } = req.query;
+    if (search) {
+        allListings = await Listing.find({
+            $or: [
+                { title: { $regex: search, $options: "i" } },
+                { location: { $regex: search, $options: "i" } },
+                { country: { $regex: search, $options: "i" } }
+            ]
+        });
+        if(allListings.length === 0) {
+            req.flash('error', "No listings found matching your search.");
+            return res.redirect("/listings");
+        }
+    } else if (category) {
+        allListings = await Listing.find({ category: category });
+        if(allListings.length === 0) {
+            req.flash('error', `No listings found in the ${category} category.`);
+            return res.redirect("/listings");
+        }
+    } else {
+        allListings = await Listing.find({});
+    }
     res.render("./listings/index.ejs", { allListings });
 }
 
